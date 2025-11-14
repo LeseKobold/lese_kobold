@@ -1,13 +1,12 @@
-import google.adk
+# import google.adk
 import litellm
 
-
-class Agent(google.adk.Agent):
-    def __init__(self, name: str):
-        super().__init__(name)
-
-    def run(self):
-        print(f"Running {self.name}")
+# class Agent(google.adk.Agent):
+#    def __init__(self, name: str):
+#        super().__init__(name)
+#
+#    def run(self):
+#        print(f"Running {self.name}")
 
 
 def main():
@@ -18,4 +17,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    response = main()
+    print(response)

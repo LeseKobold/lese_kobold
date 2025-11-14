@@ -1,0 +1,33 @@
+import os
+import pathlib
+
+import pydantic
+import pydantic_settings
+
+
+def get_root_path() -> pathlib.Path:
+    current = pathlib.Path(__file__).resolve().parent
+    while not (current / "pyproject.toml").exists() and current != current.parent:
+        current = current.parent
+    return current
+
+
+class AppConfig(pydantic_settings.BaseSettings):
+    PROCESS_ID: int = os.getpid()
+    ROOT_PATH: pathlib.Path = get_root_path()
+    APP_VERSION: str = "0.1.0"  # TODO: Get from pyproject.toml
+
+
+app_config = AppConfig()
+
+
+class LLMConfig(pydantic_settings.BaseSettings):
+    OPENAI_API_KEY: pydantic.SecretStr
+    MODEL_NAME: str = "gpt-3.5-turbo"
+
+    model_config = pydantic_settings.SettingsConfigDict(
+        env_file=app_config.ROOT_PATH / ".env", env_file_encoding="utf-8"
+    )
+
+
+llm_config = LLMConfig()
