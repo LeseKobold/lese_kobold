@@ -2,6 +2,10 @@
 import litellm
 from config import llm_config
 
+# import os
+# NOTE uncomment in case the API key is not initialized in the environment
+# os.environ["OPENAI_API_KEY"] = llm_config.OPENAI_API_KEY.get_secret_value()
+
 # class Agent(google.adk.Agent):
 #    def __init__(self, name: str):
 #        super().__init__(name)
