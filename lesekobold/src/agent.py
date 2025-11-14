@@ -1,5 +1,6 @@
 # import google.adk
 import litellm
+from config import llm_config
 
 # class Agent(google.adk.Agent):
 #    def __init__(self, name: str):
@@ -11,7 +12,7 @@ import litellm
 
 def main():
     return litellm.completion(
-        model="gpt-3.5-turbo",
+        model=llm_config.MODEL_NAME,
         messages=[{"content": "Hello, how are you?", "role": "user"}],
     )
 
