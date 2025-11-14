@@ -5,6 +5,7 @@
         "titleBar.activeForeground": "#FEFBFD"
     },
     "conventionalCommits.scopes": [
-        "app"
+        "app",
+        "llm"
     ]
 }
