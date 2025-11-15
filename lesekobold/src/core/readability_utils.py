@@ -2,12 +2,12 @@
 
 Moved out of `agent_manager.py` for separation of concerns.
 """
+
 from __future__ import annotations
 
 import logging
 import re
 from typing import List, Tuple
-
 
 LONG_WORD_LENGTH = 6
 

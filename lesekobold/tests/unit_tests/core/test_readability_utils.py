@@ -1,7 +1,7 @@
 import pytest
 
 from lesekobold.src.config import app_config
-from lesekobold.src.readability_utils import (
+from lesekobold.src.core.readability_utils import (
     calculate_lix_score,
     convert_lix_to_frontread_school_grades,
     convert_lix_to_school_grade,

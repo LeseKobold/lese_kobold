@@ -1,5 +1,5 @@
 import pytest
-from src.agent_manager import AgentManager, build_kobold_agent
+from src.core.agent_manager import AgentManager, build_kobold_agent
 from src.dataclasses.agent_personas import story_agent_settings
 
 
