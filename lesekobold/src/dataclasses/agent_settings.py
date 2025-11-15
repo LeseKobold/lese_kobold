@@ -17,6 +17,9 @@ class AgentSettings(pydantic.BaseModel):
     model_provider: str
     temperature: float = 1.0
     max_output_tokens: int | None = None
+    input_schema: typing.Type[pydantic.BaseModel] | None = None
+    output_schema: typing.Type[pydantic.BaseModel] | None = None
+    output_key: str | None = None
 
     _model: google.adk.models.lite_llm.LiteLlm | None = None
 

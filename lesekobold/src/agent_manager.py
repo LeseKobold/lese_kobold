@@ -10,12 +10,6 @@ from src.dataclasses.story_settings import content_agent_settings, style_agent_s
 
 logging.basicConfig(level=logging.ERROR)
 
-from .readability_utils import (
-    calculate_lix_score,
-    convert_lix_to_school_grade,
-    convert_lix_to_frontread_school_grades,
-    lix_to_worksheetcrafter_school_grades,
-)
 
 class AgentManager:
     """
@@ -40,6 +34,9 @@ class AgentManager:
                 instruction=(self.agent_settings.instruction),
                 tools=self.agent_settings.tools,
                 generate_content_config=self.agent_settings.generate_content_config,
+                input_schema=self.agent_settings.input_schema,
+                output_schema=self.agent_settings.output_schema,
+                output_key=self.agent_settings.output_key,
             )
         except Exception as e:
             logging.error(
