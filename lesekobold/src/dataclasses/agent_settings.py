@@ -47,21 +47,3 @@ class AgentSettings(pydantic.BaseModel):
             temperature=self.temperature,
             max_output_tokens=self.max_output_tokens,
         )
-
-
-pre_processing_agent_settings = AgentSettings(
-    name="pre_processing_agent_v1",
-    model_name=llm_config.OPENAI_MODEL_NAME,
-    model_provider="openai",
-    instruction="""Convert the input into a single, JSON object with exactly three fields: content, style and appropriate read level (grade level).
-- content: all story information, exactly like the input, dont actually generate a story.
-- style: story metadata, only a string
-- level: integer
-
-Do not include any extra fields, arrays, or nested objects. Output must be exactly:
-{"content": "...", "style": "...", "level": "..."}""",
-    description="Generates a JSON object string for further processing.",
-    tools=[],
-    temperature=1.0,
-    # max_output_tokens=10_000,  # TODO: get a reasonable limit
-)

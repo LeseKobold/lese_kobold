@@ -1,6 +1,6 @@
 import pytest
-from src.agent_manager import AgentManager, build_story_agent
-from src.dataclasses.story_settings import story_agent_settings
+from src.agent_manager import AgentManager, build_kobold_agent
+from src.dataclasses.agent_personas import story_agent_settings
 
 
 @pytest.fixture
@@ -21,6 +21,6 @@ def test_agent_manager_build(agent_manager: AgentManager):
 def test_build_story_agent():
     import google.adk.agents
 
-    rval: google.adk.agents.SequentialAgent | None = build_story_agent()
+    rval: google.adk.agents.SequentialAgent | None = build_kobold_agent()
     assert rval is not None
     assert isinstance(rval, google.adk.agents.SequentialAgent)

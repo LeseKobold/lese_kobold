@@ -6,11 +6,11 @@ from pathlib import Path
 package_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(package_root))
 
-from src.agent_manager import build_story_agent  # noqa: E402
+from src.agent_manager import build_kobold_agent  # noqa: E402
 from src.config import llm_config  # noqa: E402
 
 # Step 1: Make sure that the environment variables are loaded
 assert llm_config.OPENAI_API_KEY is not None
 assert llm_config.OPENAI_MODEL_NAME is not None
 
-root_agent = build_story_agent()
+root_agent = build_kobold_agent()

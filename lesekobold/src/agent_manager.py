@@ -5,8 +5,12 @@ import logging
 import google.adk
 import google.adk.agents
 
+from src.dataclasses.agent_personas import (
+    content_agent_settings,
+    pre_processing_agent_settings,
+    style_agent_settings,
+)
 from src.dataclasses.agent_settings import AgentSettings
-from src.dataclasses.story_settings import content_agent_settings, style_agent_settings
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -54,26 +58,39 @@ class AgentManager:
 
 
 @staticmethod
-def build_story_agent() -> google.adk.agents.SequentialAgent:
-    logging.info("Building story agent...")
+def build_kobold_agent() -> google.adk.agents.SequentialAgent:
+    """Builds the Kobold story agent.
+
+    Returns:
+        The Kobold story agent (google.adk.agents.SequentialAgent).
+    """
+
+    logging.info("Building pre-processing agent...")
+    pre_processing_agent: google.adk.Agent | None = AgentManager(
+        agent_settings=pre_processing_agent_settings
+    ).build()
+    if not pre_processing_agent:
+        raise Exception("Failed to build pre-processing agent.")
+
+    logging.info("Building story agent (content subagent)...")
     content_agent: google.adk.Agent | None = AgentManager(
         agent_settings=content_agent_settings
     ).build()
     if not content_agent:
         raise Exception("Failed to build content agent.")
 
-    logging.info("Building style agent...")
+    logging.info("Building story agent (style subagent)...")
     style_agent: google.adk.Agent | None = AgentManager(
         agent_settings=style_agent_settings
     ).build()
     if not style_agent:
         raise Exception("Failed to build style agent.")
 
-    logging.info("Building story agent...")
+    logging.info("Building Kobold story agent...")
     story_agent: google.adk.agents.SequentialAgent | None = (
         google.adk.agents.SequentialAgent(
             name="story_generation_agent",
-            sub_agents=[content_agent, style_agent],
+            sub_agents=[pre_processing_agent, content_agent, style_agent],
             description="Executes the content agent and then the style agent.",
         )
     )

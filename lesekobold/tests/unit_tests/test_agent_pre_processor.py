@@ -1,9 +1,7 @@
 import pytest
 from src.agent_manager import AgentManager
-from src.agent_settings import story_agent_settings
-from src.agent_settings import pre_processing_agent_settings
+from src.dataclasses.agent_personas import pre_processing_agent_settings
 
-import google.adk.models.lite_llm
 
 @pytest.fixture
 def agent_manager() -> AgentManager:
