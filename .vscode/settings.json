@@ -5,6 +5,12 @@
         "titleBar.activeForeground": "#FEFBFD"
     },
     "conventionalCommits.scopes": [
-        "app"
-    ]
+        "app",
+        "llm"
+    ],
+    "python.testing.pytestArgs": [
+        "lesekobold"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
