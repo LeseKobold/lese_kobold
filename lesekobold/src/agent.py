@@ -3,10 +3,15 @@
 import logging
 
 import google.adk
-import google.adk.models.lite_llm
+import google.genai.types
 from config import llm_config
 
+from src.agent_settings import AgentSettings
+
 logging.basicConfig(level=logging.ERROR)
+
+
+def get_lix_score(text: str) -> float: ...
 
 
 class StoryAgent(google.adk.AgentTemplate):
@@ -17,30 +22,25 @@ class StoryAgent(google.adk.AgentTemplate):
     def __init__(self, name: str):
         super().__init__(name)
 
-    def build(self) -> google.adk.Agent | None:
-        try:
-            # TODO check if this is valid
-            model = google.adk.models.lite_llm.LiteLlm(
-                model=f"openai/{llm_config.OPENAI_MODEL_NAME}"
-            )
-        except Exception as e:
-            logging.error(
-                f"Error creating model '{llm_config.OPENAI_MODEL_NAME}' due to: {e}"
-            )
-            return None
+    def build(self, agent_settings: AgentSettings) -> google.adk.Agent | None:
+        """Builds an agent from the given agent settings.
 
-        # TODO: define agent settings and persona in a config file
+        Args:
+            agent_settings (AgentSettings): The settings for the agent.
+
+        Returns:
+            The agent (google.adk.Agent) or None if the agent could not be created.
+        """
         # TODO: move the prompts to a separate file and load them with jinja2
+        # TODO: use the prompt from resources/prompt
         try:
             rval = google.adk.Agent(
-                name="story_agent_v1",
-                model=model,  # Can be a string for Gemini or a LiteLlm object
-                description="Generates stories based on a user's prompt.",
-                instruction="You are a helpful story generator for educational children's stories. "
-                "You create stories based on the content specified by the user. "
-                "You then adjust the language and style of the story to make it more engaging and interesting for children. Make sure that the reading level is appropriate for the specified age group."
-                "Write all stories in German.",
-                # tools=[get_story],  # Pass the function directly
+                name=agent_settings.name,
+                model=agent_settings.model,
+                description=agent_settings.description,
+                instruction=(agent_settings.instruction),
+                tools=agent_settings.tools,
+                generate_content_config=agent_settings.generate_content_config,
             )
         except Exception as e:
             logging.error(
