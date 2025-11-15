@@ -24,7 +24,7 @@ app_config = AppConfig()
 
 class LLMConfig(pydantic_settings.BaseSettings):
     OPENAI_API_KEY: pydantic.SecretStr
-    MODEL_NAME: str = "gpt-3.5-turbo"
+    MODEL_NAME: str = "gpt-5-nano"
 
     model_config = pydantic_settings.SettingsConfigDict(
         env_file=app_config.ROOT_PATH / ".env", env_file_encoding="utf-8"
