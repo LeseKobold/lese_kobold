@@ -15,3 +15,7 @@ run-unit-tests: ## Run all unittests
 adk-web:
 	cd lesekobold/tests && \
 	adk web
+
+adk-cli:
+	cd lesekobold/tests && \
+	adk run test_agent
