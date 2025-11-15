@@ -1,11 +1,13 @@
-from pathlib import Path
 import pytest
 
 from lesekobold.src.config import app_config
-from lesekobold.src.readability_utils import calculate_lix_score
-from lesekobold.src.readability_utils import convert_lix_to_school_grade
-from lesekobold.src.readability_utils import convert_lix_to_frontread_school_grades
-from lesekobold.src.readability_utils import lix_to_worksheetcrafter_school_grades
+from lesekobold.src.readability_utils import (
+    calculate_lix_score,
+    convert_lix_to_frontread_school_grades,
+    convert_lix_to_school_grade,
+    lix_to_worksheetcrafter_school_grades,
+)
+
 
 @pytest.mark.unit_test
 def test_calculate_lix_score_for_text():
@@ -28,12 +30,14 @@ def test_calculate_lix_score_from_resource():
     assert isinstance(score, float)
     assert score == 43.08
 
+
 @pytest.mark.unit_test
 def test_convert_lix_to_school_grade():
     lix = 43.08
     grade = convert_lix_to_school_grade(lix)
     assert isinstance(grade, int)
     assert grade == 9
+
 
 @pytest.mark.unit_test
 def test_convert_lix_to_frontread_school_grades():
