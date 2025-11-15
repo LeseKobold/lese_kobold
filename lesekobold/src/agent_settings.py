@@ -64,14 +64,13 @@ pre_processing_agent_settings = AgentSettings(
     name="pre_processing_agent_v1",
     model_name=llm_config.OPENAI_MODEL_NAME,
     model_provider="openai",
-    instruction="""Convert the story into a single, JSON object with exactly two fields: content and style.
-	•	content: all story information (plot, characters, events).
-	•	style: story metadata (genre and audience)
-                - audience is only a number of age
-                - genre is up to two words like "non fiction" or "fantasy"
+    instruction="""Convert the input into a single, JSON object with exactly three fields: content, style and appropriate read level (grade level).
+- content: all story information, exactly like the input, dont actually generate a story.
+- style: story metadata, only a string
+- level: integer
 
 Do not include any extra fields, arrays, or nested objects. Output must be exactly:
-{"content": "...", "style": "..."}""",
+{"content": "...", "style": "...", "level": "..."}""",
     description="Generates a JSON object string for further processing.",
     tools=[],
     temperature=1.0,
