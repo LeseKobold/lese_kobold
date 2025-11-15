@@ -23,6 +23,20 @@ pytest = "^9.0.1"
 ruff = "^0.14.5"
 
 
+[tool.pytest.ini_options]
+markers = [
+    "unit_test: marks tests as proper unit tests",
+    "makes_api_call: marks tests that make actual API calls without mocking them",
+    "quality_test: marks tests used for manual quality checks",
+    "performance_test: marks a test as a performance test (runtime or correctness)",
+    "slow: marks tests that are slow to execute (deselected in CI/CD expect production)",
+]
+testpaths = ["tests"]
+addopts = "-v -ra -q"
+log_cli = true
+log_cli_level = "DEBUG"
+log_format = "%(asctime)s %(levelname)s %(message)s"
+log_date_format = "%Y-%m-%d %H:%M:%S"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
