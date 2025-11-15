@@ -15,8 +15,12 @@ def get_root_path() -> pathlib.Path:
 
 class AppConfig(pydantic_settings.BaseSettings):
     PROCESS_ID: int = os.getpid()
-    ROOT_PATH: pathlib.Path = get_root_path()
     APP_VERSION: str = "0.1.0"  # TODO: Get from pyproject.toml
+
+    ROOT_PATH: pathlib.Path = get_root_path()
+    APP_NAME: str = "lesekobold"
+    APP_PATH: pathlib.Path = ROOT_PATH / APP_NAME
+    PROMPTS_PATH: pathlib.Path = APP_PATH / "resources" / "prompts"
 
 
 app_config = AppConfig()
