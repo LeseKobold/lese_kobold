@@ -20,14 +20,14 @@ class AgentSettings(pydantic.BaseModel):
     temperature: float = 2.0
     max_output_tokens: int | None = None
 
-    _model: typing.ClassVar[google.adk.models.lite_llm.LiteLlm | None] = None
+    _model: google.adk.models.lite_llm.LiteLlm | None = None
 
     def model_post_init(self, context: typing.Any) -> None:
         self._init_model()
 
     def _init_model(self) -> None:
         try:
-            _model = google.adk.models.lite_llm.LiteLlm(
+            self._model = google.adk.models.lite_llm.LiteLlm(
                 model=f"{self.model_provider}/{self.model_name}"
             )
         except Exception as e:
