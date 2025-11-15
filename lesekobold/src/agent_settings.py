@@ -43,8 +43,7 @@ class AgentSettings(pydantic.BaseModel):
     @property
     def generate_content_config(self) -> google.genai.types.GenerateContentConfig:
         return google.genai.types.GenerateContentConfig(
-            temperature=self.temperature,
-            max_output_tokens=self.max_output_tokens,
+            temperature=self.temperature, max_output_tokens=self.max_output_tokens
         )
 
 
@@ -56,6 +55,24 @@ story_agent_settings = AgentSettings(
     model_provider="openai",
     instruction="You are a helpful story generator for educational children's stories. You create stories based on the content specified by the user. You then adjust the language and style of the story to make it more engaging and interesting for children. Make sure that the reading level is appropriate for the specified age group. Write all stories in German.",
     description="Generates stories based on a user's prompt.",
+    tools=[],
+    temperature=1.0,
+    # max_output_tokens=10_000,  # TODO: get a reasonable limit
+)
+
+pre_processing_agent_settings = AgentSettings(
+    name="pre_processing_agent_v1",
+    model_name=llm_config.OPENAI_MODEL_NAME,
+    model_provider="openai",
+    instruction="""Convert the story into a single, JSON object with exactly two fields: content and style.
+	•	content: all story information (plot, characters, events).
+	•	style: story metadata (genre and audience)
+                - audience is only a number of age
+                - genre is up to two words like "non fiction" or "fantasy"
+
+Do not include any extra fields, arrays, or nested objects. Output must be exactly:
+{"content": "...", "style": "..."}""",
+    description="Generates a JSON object string for further processing.",
     tools=[],
     temperature=1.0,
     # max_output_tokens=10_000,  # TODO: get a reasonable limit
