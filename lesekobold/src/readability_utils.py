@@ -130,3 +130,22 @@ def lix_to_worksheetcrafter_school_grades(lix: float) -> int:
     if score <= 35:
         return 4
     return 99
+
+# calculate and return the grade a given text using the defined functions above calculate_lix_score and lix_to_worksheetcrafter_school_grades
+@staticmethod 
+def get_grade_level(text: str) -> int:
+    """Calculate the grade level for the given text and map it to WorksheetCrafter grades.
+
+    Returns:
+      - 1..4 for matching classes
+      - -1 if LIX < 19
+      - 99 if LIX > 35
+    """
+    # try catch exceptions and log them
+    try:
+        lix_score = calculate_lix_score(text)
+        grade = lix_to_worksheetcrafter_school_grades(lix_score)
+    except Exception as e:
+        logging.error(f"Error calculating grade for text: {e}")
+        return 99  # return -99 in case of error
+    return grade

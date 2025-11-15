@@ -6,6 +6,8 @@ from src.dataclasses.story_model import (
     StyleOutputModel,
 )
 from src.prompt_reader import load_prompt
+from src.readability_utils import get_grade_level
+
 
 # TODO: move the prompts to a separate file and load them with jinja2
 story_agent_settings = AgentSettings(
@@ -39,7 +41,7 @@ style_agent_settings = AgentSettings(
     model_provider="openai",
     instruction=load_prompt("style_prompt.md"),
     description="Generates a style for the story a story outline and character descriptions.",
-    tools=[],
+    tools=[get_grade_level],
     temperature=1.0,
     input_schema=StyleInputModel,
     output_schema=StyleOutputModel,
