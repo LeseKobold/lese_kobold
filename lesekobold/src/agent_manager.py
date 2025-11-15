@@ -3,17 +3,13 @@
 import logging
 
 import google.adk
+import google.adk.agents
 
-from src.agent_settings import AgentSettings
+from src.dataclasses.agent_settings import AgentSettings
+from src.dataclasses.story_settings import content_agent_settings, style_agent_settings
 
 logging.basicConfig(level=logging.ERROR)
 
-from .readability_utils import (
-    calculate_lix_score,
-    convert_lix_to_school_grade,
-    convert_lix_to_frontread_school_grades,
-    lix_to_worksheetcrafter_school_grades,
-)
 
 class AgentManager:
     """
@@ -38,6 +34,9 @@ class AgentManager:
                 instruction=(self.agent_settings.instruction),
                 tools=self.agent_settings.tools,
                 generate_content_config=self.agent_settings.generate_content_config,
+                input_schema=self.agent_settings.input_schema,
+                output_schema=self.agent_settings.output_schema,
+                output_key=self.agent_settings.output_key,
             )
         except Exception as e:
             logging.error(
@@ -52,3 +51,31 @@ class AgentManager:
                 f"'{self.agent_settings.model_provider}/{self.agent_settings.model_name}'."
             )
         return agent
+
+
+@staticmethod
+def build_story_agent() -> google.adk.agents.SequentialAgent:
+    logging.info("Building story agent...")
+    content_agent: google.adk.Agent | None = AgentManager(
+        agent_settings=content_agent_settings
+    ).build()
+    if not content_agent:
+        raise Exception("Failed to build content agent.")
+
+    logging.info("Building style agent...")
+    style_agent: google.adk.Agent | None = AgentManager(
+        agent_settings=style_agent_settings
+    ).build()
+    if not style_agent:
+        raise Exception("Failed to build style agent.")
+
+    logging.info("Building story agent...")
+    story_agent: google.adk.agents.SequentialAgent | None = (
+        google.adk.agents.SequentialAgent(
+            name="story_generation_agent",
+            sub_agents=[content_agent, style_agent],
+            description="Executes the content agent and then the style agent.",
+        )
+    )
+
+    return story_agent

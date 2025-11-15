@@ -1,6 +1,6 @@
 import pytest
-from src.agent_settings import AgentSettings
 from src.config import llm_config
+from src.dataclasses.agent_settings import AgentSettings
 
 
 @pytest.fixture
