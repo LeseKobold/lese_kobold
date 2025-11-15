@@ -1,5 +1,5 @@
 import pytest
-from src.prompt_reader import load_prompt
+from src.core.prompt_reader import load_prompt
 
 
 @pytest.mark.unit_test

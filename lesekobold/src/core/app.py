@@ -11,8 +11,8 @@ import google.adk
 import google.adk.sessions
 from google.adk.sessions import InMemorySessionService
 
-from src.agent_manager import AgentManager  # noqa: E402
 from src.config import llm_config  # noqa: E402
+from src.core.agent_manager import AgentManager  # noqa: E402
 from src.dataclasses.agent_settings import story_agent_settings  # noqa: E402
 
 logging.basicConfig(level=logging.ERROR)

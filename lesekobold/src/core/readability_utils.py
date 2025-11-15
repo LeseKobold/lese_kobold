@@ -11,7 +11,6 @@ import pydantic
 from typing import List, Tuple
 from lesekobold.src.config import app_config
 
-
 LONG_WORD_LENGTH = 6
 
 

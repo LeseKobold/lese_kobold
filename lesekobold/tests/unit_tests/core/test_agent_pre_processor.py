@@ -1,5 +1,5 @@
 import pytest
-from src.agent_manager import AgentManager
+from src.core.agent_manager import AgentManager
 from src.dataclasses.agent_personas import pre_processing_agent_settings
 
 

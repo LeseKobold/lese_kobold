@@ -1,11 +1,11 @@
 from src.config import llm_config
+from src.core.prompt_reader import load_prompt
 from src.dataclasses.agent_settings import AgentSettings
 from src.dataclasses.story_model import (
     StorySpecificationModel,
     StyleInputModel,
     StyleOutputModel,
 )
-from src.prompt_reader import load_prompt
 
 # TODO: move the prompts to a separate file and load them with jinja2
 story_agent_settings = AgentSettings(
