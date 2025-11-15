@@ -48,6 +48,8 @@ class AgentSettings(pydantic.BaseModel):
         )
 
 
+# TODO: move the prompts to a separate file and load them with jinja2
+# TODO: use the prompt from resources/prompt
 story_agent_settings = AgentSettings(
     name="story_agent_v1",
     model_name=llm_config.OPENAI_MODEL_NAME,

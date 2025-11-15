@@ -3,10 +3,8 @@
 import logging
 
 import google.adk
-import google.genai.types
-from config import llm_config
 
-from src.agent_settings import AgentSettings
+from src.agent_settings import AgentSettings, story_agent_settings
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -19,40 +17,39 @@ class StoryAgent(google.adk.AgentTemplate):
     Agent for story generation.
     """
 
-    def __init__(self, name: str):
-        super().__init__(name)
+    def __init__(self, agent_settings: AgentSettings = story_agent_settings):
+        super().__init__()
+        self.agent_settings = agent_settings
 
-    def build(self, agent_settings: AgentSettings) -> google.adk.Agent | None:
-        """Builds an agent from the given agent settings.
-
-        Args:
-            agent_settings (AgentSettings): The settings for the agent.
+    def build(self) -> google.adk.Agent | None:
+        """Builds the agent from the agent settings.
 
         Returns:
             The agent (google.adk.Agent) or None if the agent could not be created.
         """
-        # TODO: move the prompts to a separate file and load them with jinja2
-        # TODO: use the prompt from resources/prompt
+
         try:
-            rval = google.adk.Agent(
-                name=agent_settings.name,
-                model=agent_settings.model,
-                description=agent_settings.description,
-                instruction=(agent_settings.instruction),
-                tools=agent_settings.tools,
-                generate_content_config=agent_settings.generate_content_config,
+            agent = google.adk.Agent(
+                name=self.agent_settings.name,
+                model=self.agent_settings.model,
+                description=self.agent_settings.description,
+                instruction=(self.agent_settings.instruction),
+                tools=self.agent_settings.tools,
+                generate_content_config=self.agent_settings.generate_content_config,
             )
         except Exception as e:
             logging.error(
-                f"Error creating agent '{rval.name}' using model "
-                f"'{llm_config.OPENAI_MODEL_NAME}' due to: {e}"
+                f"Error creating agent '{agent.name}' using model "
+                f"'{self.agent_settings.model_provider}/{self.agent_settings.model_provider}' "
+                f"due to error: {e}"
             )
             return None
         else:
             logging.info(
-                f"Agent '{rval.name}' created using model '{llm_config.OPENAI_MODEL_NAME}'."
+                f"Agent '{agent.name}' created using model "
+                f"'{self.agent_settings.model_provider}/{self.agent_settings.model_name}'."
             )
-        return rval
+        return agent
 
 
 if __name__ == "__main__":
