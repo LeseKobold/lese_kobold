@@ -1,5 +1,6 @@
 import os
 import pathlib
+import typing
 
 import pydantic
 import pydantic_settings
@@ -28,6 +29,11 @@ class LLMConfig(pydantic_settings.BaseSettings):
     model_config = pydantic_settings.SettingsConfigDict(
         env_file=app_config.ROOT_PATH / ".env", env_file_encoding="utf-8"
     )
+
+    def model_post_init(self, context: typing.Any) -> None:
+        # NOTE: this should not be needed,
+        # but for some local envs it does not get loaded automatically
+        os.environ["OPENAI_API_KEY"] = self.OPENAI_API_KEY.get_secret_value()
 
 
 llm_config = LLMConfig()

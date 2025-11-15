@@ -1,17 +1,20 @@
 # import google.adk
+
+import logging
+
+import google.adk
 import litellm
 from config import llm_config
 
-# import os
-# NOTE uncomment in case the API key is not initialized in the environment
-# os.environ["OPENAI_API_KEY"] = llm_config.OPENAI_API_KEY.get_secret_value()
+logging.basicConfig(level=logging.ERROR)
 
-# class Agent(google.adk.Agent):
-#    def __init__(self, name: str):
-#        super().__init__(name)
-#
-#    def run(self):
-#        print(f"Running {self.name}")
+
+class Agent(google.adk.Agent):
+    def __init__(self, name: str):
+        super().__init__(name)
+
+    def run(self):
+        print(f"Running {self.name}")
 
 
 def main():
