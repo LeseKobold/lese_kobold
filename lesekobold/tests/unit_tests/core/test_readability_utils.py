@@ -9,6 +9,7 @@ from lesekobold.src.core.readability_utils import (
 )
 
 
+
 @pytest.mark.unit_test
 def test_calculate_lix_score_for_text():
     # 30 words, 2 sentences, 7 long words (>6 chars) -> LIX = (32/2) + (7*100/32) = 16 + 21.875 = 37.875 -> 38.33
