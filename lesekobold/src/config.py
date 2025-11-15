@@ -23,6 +23,7 @@ class AppConfig(pydantic_settings.BaseSettings):
     PROMPTS_PATH: pathlib.Path = APP_PATH / "resources" / "prompts"
     RESOURCES_PATH: pathlib.Path = APP_PATH / "resources"
     STORIES_PATH: pathlib.Path = RESOURCES_PATH / "stories"
+    BASIC_VOCAB_PATH: pathlib.Path = RESOURCES_PATH / "basic_vocab"
 
 
 app_config = AppConfig()
