@@ -38,3 +38,9 @@ class StyleOutputModel(pydantic.BaseModel):
     target_grade: str
     difficulty_level: typing.Literal["easy", "medium", "hard"]
     percentage_of_basic_vocabulary: float
+
+
+class StorySpecificationModel(pydantic.BaseModel):
+    content: str
+    style: str
+    level: int
