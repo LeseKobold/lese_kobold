@@ -10,9 +10,12 @@ from src.dataclasses.story_settings import content_agent_settings, style_agent_s
 
 logging.basicConfig(level=logging.ERROR)
 
-
-def get_lix_score(text: str) -> float: ...
-
+from .readability_utils import (
+    calculate_lix_score,
+    convert_lix_to_school_grade,
+    convert_lix_to_frontread_school_grades,
+    lix_to_worksheetcrafter_school_grades,
+)
 
 class AgentManager:
     """

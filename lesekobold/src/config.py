@@ -21,6 +21,8 @@ class AppConfig(pydantic_settings.BaseSettings):
     APP_NAME: str = "lesekobold"
     APP_PATH: pathlib.Path = ROOT_PATH / APP_NAME
     PROMPTS_PATH: pathlib.Path = APP_PATH / "resources" / "prompts"
+    RESOURCES_PATH: pathlib.Path = APP_PATH / "resources"
+    STORIES_PATH: pathlib.Path = RESOURCES_PATH / "stories"
 
 
 app_config = AppConfig()
