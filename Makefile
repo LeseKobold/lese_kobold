@@ -11,3 +11,7 @@ run-dev-tests: ## Run pytests that are executed in the development CI/CD pipelin
 
 run-unit-tests: ## Run all unittests 
 	poetry run pytest -m "unit_test"
+
+adk-web:
+	cd lesekobold/tests && \
+	adk web

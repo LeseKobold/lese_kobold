@@ -17,7 +17,7 @@ class AgentSettings(pydantic.BaseModel):
     description: str
     tools: list[typing.Callable]
     model_provider: str
-    temperature: float = 2.0
+    temperature: float = 1.0
     max_output_tokens: int | None = None
 
     _model: google.adk.models.lite_llm.LiteLlm | None = None
@@ -57,4 +57,6 @@ story_agent_settings = AgentSettings(
     instruction="You are a helpful story generator for educational children's stories. You create stories based on the content specified by the user. You then adjust the language and style of the story to make it more engaging and interesting for children. Make sure that the reading level is appropriate for the specified age group. Write all stories in German.",
     description="Generates stories based on a user's prompt.",
     tools=[],
+    temperature=1.0,
+    # max_output_tokens=10_000,  # TODO: get a reasonable limit
 )
