@@ -4,7 +4,7 @@ import logging
 
 import google.adk
 
-from src.agent_settings import AgentSettings, story_agent_settings
+from src.agent_settings import AgentSettings
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -12,13 +12,12 @@ logging.basicConfig(level=logging.ERROR)
 def get_lix_score(text: str) -> float: ...
 
 
-class StoryAgent(google.adk.AgentTemplate):
+class AgentManager:
     """
     Agent for story generation.
     """
 
-    def __init__(self, agent_settings: AgentSettings = story_agent_settings):
-        super().__init__()
+    def __init__(self, agent_settings: AgentSettings):
         self.agent_settings = agent_settings
 
     def build(self) -> google.adk.Agent | None:
@@ -50,7 +49,3 @@ class StoryAgent(google.adk.AgentTemplate):
                 f"'{self.agent_settings.model_provider}/{self.agent_settings.model_name}'."
             )
         return agent
-
-
-if __name__ == "__main__":
-    print("Hello, world!")
