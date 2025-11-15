@@ -22,7 +22,7 @@ def test_model_is_working():
     from src.config import llm_config
 
     response = litellm.completion(
-        model=llm_config.MODEL_NAME,
+        model=llm_config.OPENAI_MODEL_NAME,
         messages=[{"content": "Say 'Hello, world!'", "role": "user"}],
     )
     assert response is not None
