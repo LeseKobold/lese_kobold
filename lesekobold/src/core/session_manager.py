@@ -44,9 +44,9 @@ class SessionManager:
                 )
                 return None
             logging.info(
-                f"Created session '{new_session.id}' "
-                f"for user '{new_session.user_id}' "
-                f"for app '{new_session.app_name}'."
+                f"Created session '{session_id}' "
+                f"for user '{user_id}' "
+                f"for app '{self.name}'."
             )
 
         # Get an existing session (and check that creation was successful)
@@ -58,6 +58,10 @@ class SessionManager:
                     session_id=session_id,
                 )
             )
+            if not session:
+                raise Exception(
+                    f"Session is 'None' for user '{user_id}' and session '{session_id}' and app '{self.name}'."
+                )
         except Exception as e:
             logging.error(
                 f"Failed to retrieve session '{session_id}' "

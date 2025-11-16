@@ -8,7 +8,6 @@ import logging
 
 import google.adk
 import google.adk.runners
-import google.adk.sessions
 import google.genai.types
 from src.core.agent_manager import build_kobold_agent  # noqa: E402
 from src.core.session_manager import SessionManager
@@ -16,14 +15,16 @@ from src.core.session_manager import SessionManager
 logging.basicConfig(level=logging.ERROR)
 
 
-class KoboldService(google.adk.App):
+class KoboldService:
+    """Service for running the Kobold story generation agent."""
+
     def __init__(self, name: str):
         self.name = name
 
         # Get the session manager and create a session service instance
         try:
             self.session_manager: SessionManager = SessionManager.get_session_service(
-                name=name
+                app_name=name
             )
         except Exception as e:
             logging.error(
