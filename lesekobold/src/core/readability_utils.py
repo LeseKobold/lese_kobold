@@ -15,7 +15,7 @@ from src.config import app_config
 LONG_WORD_LENGTH = 6
 
 
-class ReadabilityUtils(pydantic.BaseModel):
+class ReadabilityUtils:
     """Helper class for readability-related utilities that need cached resources.
 
     `basic_vocab` maps grade -> alphabetically sorted list of unique words.
@@ -103,6 +103,7 @@ class ReadabilityUtils(pydantic.BaseModel):
         return percentage
 
 
+@staticmethod
 def calculate_lix_score(text: str, long_word_length: int = LONG_WORD_LENGTH) -> float:
     """Calculate the LIX readability score for a given text.
 
@@ -130,6 +131,7 @@ def calculate_lix_score(text: str, long_word_length: int = LONG_WORD_LENGTH) -> 
     return float(round(lix, 2))
 
 
+@staticmethod
 def convert_lix_to_school_grade(lix: float) -> int:
     """Convert a LIX score to an approximate school grade level (1..13).
 
@@ -167,6 +169,7 @@ def convert_lix_to_school_grade(lix: float) -> int:
     return 1
 
 
+@staticmethod
 def convert_lix_to_frontread_school_grades(lix: float) -> List[int]:
     """Map a LIX score to one or more grade levels using the Frontread mapping.
 
@@ -197,6 +200,7 @@ def convert_lix_to_frontread_school_grades(lix: float) -> List[int]:
     return matches
 
 
+@staticmethod
 def lix_to_worksheetcrafter_school_grades(lix: float) -> int:
     """Map a LIX score to elementary classes (WorksheetCrafter mapping).
 
@@ -242,7 +246,6 @@ def get_grade_level(text: str) -> int | None:
         logging.error(f"Error calculating grade for text: {e}")
         return None
     return grade
-
 
 def basic_vocab_coverage(
     text: str,
