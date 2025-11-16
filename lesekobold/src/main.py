@@ -22,14 +22,11 @@ import logging
 import os
 
 import fastapi
-import google.adk.runners
-import google.genai.types
 
 # import google.adk.cli.fast_api
 import uvicorn
 from src.config import app_config
-from src.core.agent_manager import build_kobold_agent
-from src.core.session_manager import SessionManager
+from src.core.kobold_service import KoboldService
 from src.dataclasses.api import APIResponse, APIStatus, UserRequest
 
 logging.basicConfig(level=logging.DEBUG)
@@ -56,8 +53,8 @@ app: fastapi.FastAPI = fastapi.FastAPI()
 # TODO: use the google adk cli to get the fast api app
 
 # Initialize services and runner on startup
-logging.debug("Initialising services...")
-session_service = SessionManager.get_session_service(API_NAME)
+logging.debug("Initialising Kobold runner...")
+kobold_service = KoboldService(name=f"{app_config.APP_NAME}_service")
 # artifact_service = get_artifact_service() # FIXME: add in memory artifact service
 
 
@@ -89,49 +86,30 @@ async def chat_with_kobold(request: UserRequest) -> APIResponse:
 async def generate_story(request: UserRequest) -> APIResponse:
     """Generation endpoint to generate a story based on the user's request."""
 
-    session_id = session_service.get_or_create_session(
-        request.user_id, request.session_id
-    )
     logging.debug(
         f"Received generation request - "
-        f"User ID: {request.user_id}, Session ID: {session_id}"
+        f"User ID: {request.user_id if request.user_id else 'unknown'}, "
+        f"Session ID: {request.session_id if request.session_id else 'unknown'}"
     )
 
-    # Construct the message parts
-    parts = [google.genai.types.Part.from_text(text=request.prompt)]
-    # Associate the role with the message
-    new_message = google.genai.types.Content(role="user", parts=parts)
-
-    # Create the runner
-    # TODO: move the runner out of this function
-    runner = google.adk.runners.Runner(
-        agent=build_kobold_agent(),
-        app_name=API_NAME,
-        session_service=session_service,
-        artifact_service=None,  # TODO: add in memory artifact service
-    )
     # Run the agent and extract response and attachments
-    logging.debug(f"Running agent for session: {session_id}")
-    final_msg = ""
-    response_attachments: list[google.genai.types.Part] = []
-    async for event in runner.run_async(
-        user_id=request.user_id,
-        session_id=session_id,
-        new_message=new_message,
-    ):
-        if event.is_final_response() and event.content and event.content.parts:
-            for part in event.content.parts:
-                if part.text:
-                    final_msg += part.text
-                elif part.inline_data:  # Check for other types of parts (e.g., images)
-                    response_attachments.append(part)
+    try:
+        final_msg, response_attachments = await kobold_service.run(
+            prompt=request.prompt,
+            user_id=request.user_id,
+            session_id=request.session_id,
+        )
+    except Exception as e:
+        return APIResponse(
+            session_id=request.session_id,
+            response_body=None,
+            status=APIStatus.ERROR,
+            error_message=f"Failed to generate story: {e}",
+        )
 
-    logging.debug(f"Agent for session {session_id} finished.")
-    logging.debug(f"Final message snippet: {final_msg[:100]}...")
-
-    # TODO figure out if this is returning the response in the expected format
+    # TODO make sure that the response body is in the expected format and can be parsed successfully into the required pydantic model
     return APIResponse(
-        session_id=session_id,
+        session_id=request.session_id,
         response_body=final_msg,
         status=APIStatus.SUCCESS,
         error_message=None,

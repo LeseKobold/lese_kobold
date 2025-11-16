@@ -12,9 +12,9 @@ class APIStatus(StrEnum):
 class UserRequest(pydantic.BaseModel):
     """Request model for the API endpoints."""
 
-    session_id: str | None = None
-    user_id: str | None = None
+    user_id: str
     prompt: str
+    session_id: str | None = None
 
 
 class APIResponse(pydantic.BaseModel):
