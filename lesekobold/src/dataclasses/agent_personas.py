@@ -1,12 +1,15 @@
 from src.config import llm_config
 from src.core.prompt_reader import load_prompt
 from src.core.readability_utils import get_grade_level
+from src.core.readability_utils import ReadabilityUtils
 from src.dataclasses.agent_settings import AgentSettings
 from src.dataclasses.story_model import (
     LeveledStoryModel,
     StoryModel,
     StorySpecificationModel,
 )
+
+ru = ReadabilityUtils()
 
 content_agent_settings = AgentSettings(
     name="content_agent",
@@ -27,10 +30,11 @@ style_agent_settings = AgentSettings(
     model_provider="openai",
     instruction=load_prompt(
         prompt_name="style_prompt.md",
-        variables={"get_grade_level": get_grade_level.__name__},
+        variables={"get_grade_level": get_grade_level.__name__,
+                   "get_basic_vocab_coverage": ru.get_basic_vocab_coverage.__name__},
     ),
     description="Generates a style for the story a story outline and character descriptions.",
-    tools=[get_grade_level],
+    tools=[get_grade_level, ru.get_basic_vocab_coverage],
     temperature=1.0,
     input_schema=StoryModel,
     output_schema=LeveledStoryModel,
