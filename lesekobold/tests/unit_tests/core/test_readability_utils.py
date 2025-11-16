@@ -39,7 +39,7 @@ def sample_text_grade_1() -> str:
 
 
 @pytest.mark.unit_test
-def test_init_basic_vocab():
+def test_init_basic_vocab(readability_utils: ReadabilityUtils):
     vocab = readability_utils.basic_vocab
 
     assert isinstance(vocab, dict)
@@ -117,3 +117,11 @@ def test_lix_to_worksheetcrafter_school_grades():
 def test_get_grade_level(sample_text_grade_4, sample_text_grade_1):
     assert get_grade_level(sample_text_grade_4) == 4
     assert get_grade_level(sample_text_grade_1) == 1
+
+
+@pytest.mark.unit_test
+def test_readability_utils_is_singleton():
+    instance1 = ReadabilityUtils()
+    instance2 = ReadabilityUtils()
+
+    assert instance1 is instance2

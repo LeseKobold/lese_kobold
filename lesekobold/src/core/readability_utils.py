@@ -8,6 +8,8 @@ from __future__ import annotations
 import logging
 import re
 from typing import List, Tuple
+from src.config import app_config
+from src.utils.singleton import Singleton
 
 import pydantic
 from src.config import app_config
@@ -15,10 +17,11 @@ from src.config import app_config
 LONG_WORD_LENGTH = 6
 
 
-class ReadabilityUtils:
+class ReadabilityUtils(metaclass=Singleton):
     """Helper class for readability-related utilities that need cached resources.
 
     `basic_vocab` maps grade -> alphabetically sorted list of unique words.
+    Implemented as a singleton to avoid reloading vocab files on every instantiation.
     """
 
     _basic_vocab: dict[int, list[str]] | None = None
@@ -247,78 +250,19 @@ def get_grade_level(text: str) -> int | None:
         return None
     return grade
 
-def basic_vocab_coverage(
-    text: str,
-    vocab: set[str] | None = None,
-    unique: bool = False,
-    unknown_limit: int = 20,
-) -> dict:
-    """Compute percentage of words in `text` that appear in `vocab`.
+
+@staticmethod
+def get_basic_vocab_coverage(
+    text: str, grade: int, case_sensitive: bool = False
+) -> float:
+    """Compute percentage of words in text that appear in the basic vocab for the given grade.
 
     Args:
-        text: input text to check.
-        vocab: optional preloaded set of lowercase words. If not provided,
-            this function will load files from `resources/basic-vocab`.
-        unique: if True, compute coverage over unique word types instead
-            of token occurrences.
-        unknown_limit: how many unknown words to return in the result sample.
+        text: input text to check
+        grade: grade level (1-13)
+        case_sensitive: if True, match words case-sensitively; if False (default), normalize to lowercase
 
     Returns:
-        dict with keys: `total`, `matched`, `percentage` (0..100),
-        `unknown` (list of sample unknown words), and if `unique` is True,
-        `unique_total`, `unique_matched` are also present.
+        percentage (0-100) of words found in the grade's vocabulary
     """
-    if vocab is None:
-        vocab = load_basic_vocab()
-
-    word_re = re.compile(r"[^\W\d_]+(?:[-'][^\W\d_]+)*", flags=re.UNICODE)
-    tokens = [w.lower() for w in word_re.findall(text)]
-
-    total = 0
-    matched = 0
-    unknown_words: list[str] = []
-
-    if unique:
-        types = list(dict.fromkeys(tokens))  # preserve order
-        total = len(types)
-        for w in types:
-            if w in vocab:
-                matched += 1
-            else:
-                if len(unknown_words) < unknown_limit:
-                    unknown_words.append(w)
-    else:
-        total = len(tokens)
-        for w in tokens:
-            if w in vocab:
-                matched += 1
-            else:
-                if len(unknown_words) < unknown_limit:
-                    unknown_words.append(w)
-
-    percentage = float(round((matched / total) * 100.0, 2)) if total > 0 else 0.0
-    result = {
-        "total": total,
-        "matched": matched,
-        "percentage": percentage,
-        "unknown": unknown_words,
-    }
-    if unique:
-        result["unique_total"] = total
-        result["unique_matched"] = matched
-    return result
-
-
-def load_basic_vocab() -> set[str]:
-    """Return a flattened set of all basic-vocab words (lowercased).
-
-    Uses the `ReadabilityUtils` helper to load grade-specific lists, then
-    flattens them into a set for fast membership checks.
-    """
-    ru = ReadabilityUtils()
-    data = ru.basic_vocab or {}
-    flat: set[str] = set()
-    for words in data.values():
-        for w in words:
-            flat.add(w.lower())
-    return flat
+    return ReadabilityUtils().get_basic_vocab_coverage(text, grade, case_sensitive)
