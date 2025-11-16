@@ -8,6 +8,8 @@ from src.core.readability_utils import (
     convert_lix_to_school_grade,
     lix_to_worksheetcrafter_school_grades,
     get_grade_level,
+    get_text_is_covered_by_basic_vocab,
+    get_basic_vocab_coverage,
     ReadabilityUtils,
 )
 
@@ -38,6 +40,46 @@ def sample_text_grade_1() -> str:
     )
 
 
+@pytest.fixture
+def sample_text_grade_1_basic_vocab() -> str:
+    return (
+        "Eine kleine Maus hüpft um einen Löwen herum. "
+        "Der Löwe schläft in der warmen Sonne. "
+        "Die Maus steigt dem Löwen auf die Pfoten. "
+        "Da wurde der Löwe wach. "
+        "Der Löwe hat Hunger. "
+        "Er will die Maus fressen. "
+    )
+
+
+@pytest.fixture
+def sample_text_herbst() -> str:
+    return (
+        "Es ist Herbst. Die Luft ist kalt. "
+        "In der Klasse 1 sitzen Mia, Ben und Luca. "
+        "Ihre Lehrerin heißt Frau Klein. "
+        "Heute haben sie eine einfache Aufgabe: Sie basteln eine Laterne und legen einen Kürbis daneben. "
+        "Der Kürbis ist orange. "
+        "Die Laterne wird bunt. "
+        "Draußen ist der Hof voll Blätter. "
+        "Der Mond steht oben am Himmel. "
+        "Die Laternen leuchten. "
+        "Es passiert ein Unfall. "
+        "Ben stolpert über einen Stein und fällt ins Gras. "
+        "Er tut sich nicht weh. "
+        "Er ist aber verlegen. "
+        "Frau Klein hilft ihm. "
+        "Die anderen helfen auch. "
+        "Sie räumen Steine weg, damit niemand stolpert. "
+        "Zurück im Zimmer erzählen sie, was sie gesehen haben. "
+        "Die Laterne leuchtet weiter, der Mond schaut freundlich. "
+        "Wir helfen uns. "
+        "Wir passen auf. "
+        "Am Schluss sind alle froh. "
+        "Herbst ist schön, wenn alle mitmachen."
+    )
+
+
 @pytest.mark.unit_test
 def test_init_basic_vocab(readability_utils: ReadabilityUtils):
     vocab = readability_utils.basic_vocab
@@ -53,10 +95,9 @@ def test_init_basic_vocab(readability_utils: ReadabilityUtils):
 
 @pytest.mark.unit_test
 def test_get_basic_vocab_coverage():
-    ru = ReadabilityUtils()
     text = "Die Brüder ärgern sich über die Katze, die immer faucht."
-    coverage = ru.get_basic_vocab_coverage(text, grade=1)
-    coverage_case_sensitive = ru.get_basic_vocab_coverage(
+    coverage = get_basic_vocab_coverage(text, grade=1)
+    coverage_case_sensitive = get_basic_vocab_coverage(
         text, grade=1, case_sensitive=True
     )
     logging.debug(f"Coverage for grade 1: {coverage}")
@@ -125,3 +166,37 @@ def test_readability_utils_is_singleton():
     instance2 = ReadabilityUtils()
 
     assert instance1 is instance2
+
+
+@pytest.mark.unit_test
+def test_get_text_is_covered_by_basic_vocab(
+    sample_text_grade_1_basic_vocab, sample_text_grade_4
+):
+    is_covered_grade_1 = get_text_is_covered_by_basic_vocab(
+        sample_text_grade_1_basic_vocab, grade=1
+    )
+
+    assert isinstance(is_covered_grade_1, bool)
+
+    assert is_covered_grade_1 is True  # coverage is 73%, threshold is 60%
+
+    assert get_text_is_covered_by_basic_vocab(sample_text_grade_4, grade=1) is False
+
+
+@pytest.mark.unit_test
+def test_herbst_text(sample_text_herbst):
+    grade = get_grade_level(sample_text_herbst)
+    assert isinstance(grade, int)
+    assert grade == 2
+
+    lix = calculate_lix_score(sample_text_herbst)
+    assert isinstance(lix, float)
+    assert round(lix, 2) == 24.11
+
+    basic_vocab_coverage = get_basic_vocab_coverage(sample_text_herbst, grade=1)
+    assert isinstance(basic_vocab_coverage, float)
+    assert round(basic_vocab_coverage, 1) == 54.6
+
+    is_covered = get_text_is_covered_by_basic_vocab(sample_text_herbst, grade=1)
+    assert isinstance(is_covered, bool)
+    assert is_covered is False  # coverage is 54.6%, threshold is 60%

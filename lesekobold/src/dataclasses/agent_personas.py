@@ -7,10 +7,12 @@ from src.dataclasses.story_model import (
     LeveledStoryModel,
     StoryModel,
     StorySpecificationModel,
+    JudgeOutputModel,
 )
 from src.core.readability_utils import (
-    get_grade_level,
-    ReadabilityUtils,
+    calculate_lix_score,
+    get_text_is_covered_by_basic_vocab,
+    get_basic_vocab_coverage,
 )
 
 ru = ReadabilityUtils()
@@ -34,8 +36,10 @@ style_agent_settings = AgentSettings(
     model_provider="openai",
     instruction=load_prompt(
         prompt_name="style_prompt.md",
-        variables={"get_grade_level": get_grade_level.__name__,
-                   "get_basic_vocab_coverage": ru.get_basic_vocab_coverage.__name__},
+        variables={
+            "get_grade_level": get_grade_level.__name__,
+            "get_basic_vocab_coverage": ru.get_basic_vocab_coverage.__name__,
+        },
     ),
     description="Generates a style for the story a story outline and character descriptions.",
     tools=[get_grade_level, ru.get_basic_vocab_coverage],
@@ -62,10 +66,24 @@ judge_agent_settings = AgentSettings(
     name="judge_agent_v1",
     model_name=llm_config.OPENAI_MODEL_NAME,
     model_provider="openai",
-    instruction=load_prompt("judge_prompt.md"),
-    description="Gives feedback on the generated story and either triggers a story refinement or forwards the story to the user.",
-    tools=[get_grade_level, ReadabilityUtils().get_basic_vocab_coverage],
+    instruction=load_prompt(
+        prompt_name="judge_prompt.md",
+        variables={
+            "get_grade_level": get_grade_level.__name__,
+            "get_text_is_covered_by_basic_vocab": get_text_is_covered_by_basic_vocab.__name__,
+            "get_lix_score": calculate_lix_score.__name__,
+            "get_basic_vocab_coverage": get_basic_vocab_coverage.__name__,
+        },
+    ),
+    description="Judges the generated story and either triggers a story refinement or forwards the story to the user.",
+    tools=[
+        get_grade_level,
+        get_text_is_covered_by_basic_vocab,
+        calculate_lix_score,
+        get_basic_vocab_coverage,
+    ],
     temperature=1.0,
-    output_schema=StyleInputModel | StyleOutputModel,
+    input_schema=LeveledStoryModel,
+    output_schema=JudgeOutputModel,
     output_key="judge_output",
 )

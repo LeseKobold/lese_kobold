@@ -34,4 +34,4 @@ Verwende die Funktion `{{ get_basic_vocab_coverage }}`.
 - Schreibe kindgerecht, fantasievoll, warmherzig und leicht verständlich.
 - Achte darauf, dass jede Version erzählerisch vollständig ist (Anfang, Mitte, Ende).
 - Vermeide unnötige Komplexität, aber unterschätze das Zielalter nicht.
-- Die Figuren sollen Kinder sein, deren Alter zur jeweiligen Klassenstufe passt.  
+- Die Figuren sollen Kinder sein, deren Alter zur jeweiligen Klassenstufe passt. 

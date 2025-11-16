@@ -11,10 +11,15 @@ from typing import List, Tuple
 from src.config import app_config
 from src.utils.singleton import Singleton
 
-import pydantic
-from src.config import app_config
 
 LONG_WORD_LENGTH = 6
+
+BASIC_VOCABULARY_COVERAGE_CRITERIA = {
+    1: 60.0,
+    2: 70.0,
+    3: 80.0,
+    4: 90.0,
+}
 
 
 class ReadabilityUtils(metaclass=Singleton):
@@ -266,3 +271,25 @@ def get_basic_vocab_coverage(
         percentage (0-100) of words found in the grade's vocabulary
     """
     return ReadabilityUtils().get_basic_vocab_coverage(text, grade, case_sensitive)
+
+
+@staticmethod
+def get_text_is_covered_by_basic_vocab(
+    text: str, grade: int, case_sensitive: bool = False
+) -> bool:
+    """Check if the text meets the basic vocabulary coverage criteria for the given grade.
+
+    Args:
+        text: input text to check
+        grade: grade level (1-4)
+        case_sensitive: if True, match words case-sensitively; if False (default), normalize to lowercase
+    Returns:
+        True if the text meets or exceeds the basic vocabulary coverage criteria for the grade, False otherwise
+    """
+    coverage = get_basic_vocab_coverage(text, grade, case_sensitive)
+    logging.debug(f"Basic vocabulary coverage for grade {grade}: {coverage}%")
+    required_coverage = BASIC_VOCABULARY_COVERAGE_CRITERIA.get(grade)
+    logging.debug(
+        f"Required vocabulary coverage for grade {grade}: {required_coverage}%"
+    )
+    return coverage >= required_coverage
