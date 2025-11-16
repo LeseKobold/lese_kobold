@@ -3,21 +3,9 @@ from src.core.prompt_reader import load_prompt
 from src.core.readability_utils import get_grade_level
 from src.dataclasses.agent_settings import AgentSettings
 from src.dataclasses.story_model import (
+    LeveledStoryModel,
+    StoryModel,
     StorySpecificationModel,
-    StyleInputModel,
-    StyleOutputModel,
-)
-
-# TODO: move the prompts to a separate file and load them with jinja2
-story_agent_settings = AgentSettings(
-    name="story_orchestrator",
-    model_name=llm_config.OPENAI_MODEL_NAME,
-    model_provider="openai",
-    instruction=load_prompt("story_prompt.md"),
-    description="Generates stories based on a user's prompt.",
-    tools=[],
-    temperature=1.0,
-    # max_output_tokens=10_000,  # TODO: get a reasonable limit
 )
 
 content_agent_settings = AgentSettings(
@@ -29,9 +17,8 @@ content_agent_settings = AgentSettings(
     tools=[],
     temperature=1.0,
     input_schema=StorySpecificationModel,
-    output_schema=StyleInputModel,
+    output_schema=StoryModel,
     output_key="content",
-    # max_output_tokens=10_000,  # TODO: get a reasonable limit
 )
 
 style_agent_settings = AgentSettings(
@@ -45,8 +32,8 @@ style_agent_settings = AgentSettings(
     description="Generates a style for the story a story outline and character descriptions.",
     tools=[get_grade_level],
     temperature=1.0,
-    input_schema=StyleInputModel,
-    output_schema=StyleOutputModel,
+    input_schema=StoryModel,
+    output_schema=LeveledStoryModel,
     output_key="style",
 )
 

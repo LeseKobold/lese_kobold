@@ -1,46 +1,28 @@
-import typing
-
 import pydantic
 
 
-class CharacterModel(pydantic.BaseModel):
-    name: str
-    description: str
+class StoryModel(pydantic.BaseModel):
+    """A story model that contains the basic story and the target grade."""
+
+    title: str
+    basic_story: str
+    target_grade: int
 
 
-class SettingModel(pydantic.BaseModel):
-    place: str
-    time: str
+class LeveledStoryModel(StoryModel):
+    """A leveled story model that contains different versions of the story."""
 
-
-class SceneModel(pydantic.BaseModel):
-    scene_number: int
-    scene_outline: str
-    characters: list[str]
-    setting: SettingModel
-
-
-class StoryContentModel(pydantic.BaseModel):
-    storyline: list[SceneModel]
-    characters: list[CharacterModel]
-    themes: list[str]
-    genre: str
-
-
-class StyleInputModel(pydantic.BaseModel):
-    storyline: StoryContentModel
-    target_grade: str
-    difficulty_level: typing.Literal["easy", "medium", "hard"]
-
-
-class StyleOutputModel(pydantic.BaseModel):
-    story: str
-    target_grade: str
-    difficulty_level: typing.Literal["easy", "medium", "hard"]
     percentage_of_basic_vocabulary: float
+    observed_grade: int
+
+    easy_story: str
+    medium_story: str
+    challenging_story: str
 
 
 class StorySpecificationModel(pydantic.BaseModel):
+    """A story specification model that contains the content, style and level."""
+
     content: str
     style: str
     level: int

@@ -10,8 +10,7 @@ import re
 from typing import List, Tuple
 
 import pydantic
-
-from lesekobold.src.config import app_config
+from src.config import app_config
 
 LONG_WORD_LENGTH = 6
 

@@ -4,7 +4,6 @@ import logging
 
 import google.adk
 import google.adk.agents
-
 from src.dataclasses.agent_personas import (
     content_agent_settings,
     pre_processing_agent_settings,
@@ -95,4 +94,6 @@ def build_kobold_agent() -> google.adk.agents.SequentialAgent:
         )
     )
 
+    return story_agent
+    return story_agent
     return story_agent

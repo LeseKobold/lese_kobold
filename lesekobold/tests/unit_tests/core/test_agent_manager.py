@@ -1,11 +1,11 @@
 import pytest
 from src.core.agent_manager import AgentManager, build_kobold_agent
-from src.dataclasses.agent_personas import story_agent_settings
+from src.dataclasses.agent_personas import content_agent_settings
 
 
 @pytest.fixture
 def agent_manager() -> AgentManager:
-    return AgentManager(agent_settings=story_agent_settings)
+    return AgentManager(agent_settings=content_agent_settings)
 
 
 @pytest.mark.unit_test
