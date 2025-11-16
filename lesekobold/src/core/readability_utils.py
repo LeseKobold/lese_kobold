@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import logging
 import re
-import pydantic
 from typing import List, Tuple
-from lesekobold.src.config import app_config
+
+import pydantic
+from src.config import app_config
 
 LONG_WORD_LENGTH = 6
 
@@ -47,10 +48,14 @@ class ReadabilityUtils(pydantic.BaseModel):
             try:
                 text = path.read_text(encoding="utf-8")
                 # require explicit 'grade' token in filename (e.g. basic_vocabulary_grade_1_2)
-                m = re.search(r"grade[_-]?(\d+(?:[_-]\d+)*)", path.stem, flags=re.IGNORECASE)
+                m = re.search(
+                    r"grade[_-]?(\d+(?:[_-]\d+)*)", path.stem, flags=re.IGNORECASE
+                )
                 if not m:
                     # skip files that don't explicitly declare grades in their filename
-                    logging.debug(f"Skipping vocab file without 'grade' in name: {path.name}")
+                    logging.debug(
+                        f"Skipping vocab file without 'grade' in name: {path.name}"
+                    )
                     continue
                 nums = re.split(r"[_-]+", m.group(1))
                 grades = [int(g) for g in nums if g.isdigit()]
@@ -69,15 +74,17 @@ class ReadabilityUtils(pydantic.BaseModel):
         self._basic_vocab = {
             g: sorted(list(words_set)) for g, words_set in vocab.items()
         }
-    
-    def get_basic_vocab_coverage(self, text: str, grade: int, case_sensitive: bool = False) -> float:
+
+    def get_basic_vocab_coverage(
+        self, text: str, grade: int, case_sensitive: bool = False
+    ) -> float:
         """Compute percentage of words in text that appear in the basic vocab for the given grade.
-        
+
         Args:
             text: input text to check
             grade: grade level (1-13)
             case_sensitive: if True, match words case-sensitively; if False (default), normalize to lowercase
-            
+
         Returns:
             percentage (0-100) of words found in the grade's vocabulary
         """
@@ -85,15 +92,16 @@ class ReadabilityUtils(pydantic.BaseModel):
         vocab_words = set(self.basic_vocab.get(grade, []))
         if not words:
             return 0.0
-        
+
         if case_sensitive:
             matched = sum(1 for w in words if w in vocab_words)
         else:
             vocab_lower = {v.lower() for v in vocab_words}
             matched = sum(1 for w in words if w.lower() in vocab_lower)
-        
+
         percentage = float(round((matched / len(words)) * 100.0, 2))
         return percentage
+
 
 def calculate_lix_score(text: str, long_word_length: int = LONG_WORD_LENGTH) -> float:
     """Calculate the LIX readability score for a given text.
@@ -213,6 +221,27 @@ def lix_to_worksheetcrafter_school_grades(lix: float) -> int:
     if score <= 35:
         return 4
     return 99
+
+
+# calculate and return the grade a given text using the defined functions above calculate_lix_score and lix_to_worksheetcrafter_school_grades
+@staticmethod
+def get_grade_level(text: str) -> int | None:
+    """Calculate the grade level for the given text and map it to WorksheetCrafter grades.
+
+    Returns:
+      - 1..4 for matching classes
+      - -1 if LIX < 19
+      - 99 if LIX > 35
+      - None if the text is empty or None
+    """
+    # try catch exceptions and log them
+    try:
+        lix_score = calculate_lix_score(text)
+        grade = lix_to_worksheetcrafter_school_grades(lix_score)
+    except Exception as e:
+        logging.error(f"Error calculating grade for text: {e}")
+        return None
+    return grade
 
 
 def basic_vocab_coverage(
