@@ -43,14 +43,14 @@ class AgentManager:
             )
         except Exception as e:
             logging.error(
-                f"Error creating agent '{agent.name}' using model "
+                f"Error creating agent '{self.agent_settings.name}' using model "
                 f"'{self.agent_settings.model_provider}/{self.agent_settings.model_provider}' "
                 f"due to error: {e}"
             )
             return None
         else:
             logging.info(
-                f"Agent '{agent.name}' created using model "
+                f"Agent '{self.agent_settings.name}' created using model "
                 f"'{self.agent_settings.model_provider}/{self.agent_settings.model_name}'."
             )
         return agent
@@ -94,6 +94,4 @@ def build_kobold_agent() -> google.adk.agents.SequentialAgent:
         )
     )
 
-    return story_agent
-    return story_agent
     return story_agent
