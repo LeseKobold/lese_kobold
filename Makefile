@@ -21,4 +21,7 @@ adk-cli:
 	adk run test_agent
 
 launch-api:
-	uv run uvicorn lesekobold.src.main:app --app-dir src --host 0.0.0.0 --port 8000 --reload
+	PYTHONPATH=lesekobold:$$PYTHONPATH uv run uvicorn lesekobold.src.main:app --app-dir lesekobold.src --host 0.0.0.0 --port 8000 --reload
+
+launch-api-dev:
+	cd lesekobold && PYTHONPATH=$$(pwd):$$PYTHONPATH uv run fastapi dev src/main.py --app app --host 0.0.0.0 --port 8000 --reload
