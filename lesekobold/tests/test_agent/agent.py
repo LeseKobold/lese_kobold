@@ -6,8 +6,8 @@ from pathlib import Path
 package_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(package_root))
 
-from src.core.agent_manager import build_kobold_agent  # noqa: E402
 from src.config import llm_config  # noqa: E402
+from src.core.agent_manager import build_kobold_agent  # noqa: E402
 
 # Step 1: Make sure that the environment variables are loaded
 assert llm_config.OPENAI_API_KEY is not None

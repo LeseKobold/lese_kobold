@@ -1,13 +1,12 @@
 from src.config import llm_config
 from src.core.prompt_reader import load_prompt
+from src.core.readability_utils import get_grade_level
 from src.dataclasses.agent_settings import AgentSettings
 from src.dataclasses.story_model import (
     StorySpecificationModel,
     StyleInputModel,
     StyleOutputModel,
 )
-from src.core.prompt_reader import load_prompt
-from src.core.readability_utils import get_grade_level
 
 # TODO: move the prompts to a separate file and load them with jinja2
 story_agent_settings = AgentSettings(
@@ -39,7 +38,10 @@ style_agent_settings = AgentSettings(
     name="style_agent",
     model_name=llm_config.OPENAI_MODEL_NAME,
     model_provider="openai",
-    instruction=load_prompt("style_prompt.md"),
+    instruction=load_prompt(
+        prompt_name="style_prompt.md",
+        variables={"get_grade_level": get_grade_level.__name__},
+    ),
     description="Generates a style for the story a story outline and character descriptions.",
     tools=[get_grade_level],
     temperature=1.0,
