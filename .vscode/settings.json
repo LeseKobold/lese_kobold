@@ -6,7 +6,8 @@
     },
     "conventionalCommits.scopes": [
         "app",
-        "llm"
+        "llm",
+        "readability"
     ],
     "python.testing.pytestArgs": [
         "lesekobold"

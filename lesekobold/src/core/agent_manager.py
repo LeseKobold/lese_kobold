@@ -8,6 +8,7 @@ from src.dataclasses.agent_personas import (
     content_agent_settings,
     pre_processing_agent_settings,
     style_agent_settings,
+    judge_agent_settings
 )
 from src.dataclasses.agent_settings import AgentSettings
 
@@ -85,11 +86,18 @@ def build_kobold_agent() -> google.adk.agents.SequentialAgent:
     if not style_agent:
         raise Exception("Failed to build style agent.")
 
+    logging.info("Building judge agent...")
+    judge_agent: google.adk.SequentialAgent | None = AgentManager(
+        agent_settings=judge_agent_settings
+    ).build()
+    if not judge_agent:
+        raise Exception("Failed to build judge agent.")
+
     logging.info("Building Kobold story agent...")
     story_agent: google.adk.agents.SequentialAgent | None = (
         google.adk.agents.SequentialAgent(
             name="story_generation_agent",
-            sub_agents=[pre_processing_agent, content_agent, style_agent],
+            sub_agents=[pre_processing_agent, content_agent, style_agent, judge_agent],
             description="Executes the content agent and then the style agent.",
         )
     )

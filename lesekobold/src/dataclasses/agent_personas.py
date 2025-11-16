@@ -8,6 +8,10 @@ from src.dataclasses.story_model import (
     StoryModel,
     StorySpecificationModel,
 )
+from src.core.readability_utils import (
+    get_grade_level,
+    ReadabilityUtils,
+)
 
 ru = ReadabilityUtils()
 
@@ -52,4 +56,16 @@ pre_processing_agent_settings = AgentSettings(
     temperature=1.0,
     output_schema=StorySpecificationModel,
     output_key="story_specification",
+)
+
+judge_agent_settings = AgentSettings(
+    name="judge_agent_v1",
+    model_name=llm_config.OPENAI_MODEL_NAME,
+    model_provider="openai",
+    instruction=load_prompt("judge_prompt.md"),
+    description="Gives feedback on the generated story and either triggers a story refinement or forwards the story to the user.",
+    tools=[get_grade_level, ReadabilityUtils().get_basic_vocab_coverage],
+    temperature=1.0,
+    output_schema=StyleInputModel | StyleOutputModel,
+    output_key="judge_output",
 )
